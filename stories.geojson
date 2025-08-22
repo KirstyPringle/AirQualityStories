@@ -1,0 +1,16 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "title": "Sample Story",
+        "name": "Alex",
+        "story": "This is an example climate story.",
+        "date": "2025-01-01",
+        "link": "https://example.org"
+      },
+      "geometry": { "type": "Point", "coordinates": [0, 51.5] }
+    }
+  ]
+}
