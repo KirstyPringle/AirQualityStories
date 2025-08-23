@@ -276,9 +276,12 @@
     })();
 
     // --- Click to set lat/lng ---
-    
-    // --- Zoom-to-all button ---
-    document.getElementById('zoomAll').addEventListener('click', refreshMapBounds);
+
+    // --- Zoom-to-all button (guard if button missing) ---
+    (function(){
+      const zoomBtn = document.getElementById('zoomAll');
+      if (zoomBtn) zoomBtn.addEventListener('click', refreshMapBounds);
+    })();
     map.on('click', (e) => {
       const { lat, lng } = e.latlng;
       document.getElementById('lat').value = lat.toFixed(6);
