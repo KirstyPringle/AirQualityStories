@@ -49,7 +49,10 @@
 
   <main class="max-w-7xl mx-auto px-4 grid md:grid-cols-3 gap-4 md:gap-6 py-4 md:py-6">
     <!-- Map -->
-    <section id="mapSection" class="md:col-span-2 rounded-2xl shadow bg-white border border-slate-200">
+    <section id="mapSection" class="relative $1">
+      <div class="absolute right-3 top-3 z-[1001] flex gap-2">
+        <button id="zoomAll" class="px-3 py-2 rounded-xl bg-slate-900 text-white hover:bg-slate-800 shadow">Zoom to all stories</button>
+      </div>
       <div id="map" class="rounded-2xl"></div>
     </section>
 
@@ -90,6 +93,10 @@
             <label class="block text-sm font-medium text-slate-700">Link (optional)</label>
             <input type="url" id="link" class="mt-1 w-full rounded-xl border-slate-300 focus:border-slate-500 focus:ring-slate-500" placeholder="e.g., https://example.com" />
           </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700">Year (optional)</label>
+          <input type="number" id="year" min="1800" step="1" class="mt-1 w-full rounded-xl border-slate-300 focus:border-slate-500 focus:ring-slate-500" placeholder="e.g., 2024" />
         </div>
         <div class="flex items-center gap-3">
           <button type="submit" class="px-4 py-2 rounded-xl bg-slate-900 text-white hover:bg-slate-800">Add to map</button>
@@ -145,6 +152,7 @@
           "name": "Jo",
           "story": "Each winter the path by the river floods earlier and takes longer to drain.",
           "date": "2023-12-03",
+          "year": 2023,
           "link": "https://example.org/story"
         },
         "geometry": { "type": "Point", "coordinates": [-3.1883, 55.9533] }
@@ -155,7 +163,8 @@
           "title": "Smoke over the valley",
           "name": "Sam",
           "story": "Wildfire smoke turned the sky orange for a week last summer.",
-          "date": "2024-08-18"
+          "date": "2024-08-18",
+          "year": 2024
         },
         "geometry": { "type": "Point", "coordinates": [-122.4194, 37.7749] }
       }
@@ -165,13 +174,13 @@
 
   <script>
     // --- Map init ---
-    const map = L.map('map', { scrollWheelZoom: true });
+    const map = L.map('map', { scrollWheelZoom: true, minZoom: 1, worldCopyJump: true });
     const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors'
     }).addTo(map);
 
     // Start viewpoint
-    map.setView([20, 0], 2);
+    map.setView([0, 0], 1);
 
     // Marker cluster group for performance when many points
     const cluster = L.markerClusterGroup();
@@ -187,11 +196,11 @@
       const props = feature.properties || {};
       const title = props.title || 'Untitled';
       const name = props.name ? ` by <strong>${escapeHtml(props.name)}</strong>` : '';
-      const date = props.date ? `<div class="text-xs text-slate-500 mt-1">${escapeHtml(props.date)}</div>` : '';
+      const when = (props.date || props.year) ? `<div class=\"text-xs text-slate-500 mt-1\">${props.date ? escapeHtml(props.date) : ''}${props.date && props.year ? ' · ' : ''}${props.year ? escapeHtml(String(props.year)) : ''}</div>` : '';
       const link = props.link ? `<div class="mt-2"><a class="underline" href="${escapeAttr(props.link)}" target="_blank" rel="noreferrer noopener">Learn more</a></div>` : '';
       const story = props.story ? `<p class="mt-2">${linkify(escapeHtml(props.story))}</p>` : '';
 
-      const html = `<div class="max-w-[300px]"><h3 class="font-semibold text-slate-900">${escapeHtml(title)}</h3>${date}<div class="text-sm text-slate-700">${story}${name}${link}</div></div>`;
+      const html = `<div class="max-w-[300px]"><h3 class="font-semibold text-slate-900">${escapeHtml(title)}</h3>${when}<div class="text-sm text-slate-700">${story}${name}${link}</div></div>`;
       const marker = L.marker([lat, lng]);
       marker.bindPopup(html);
       return marker;
@@ -204,12 +213,14 @@
       });
     }
 
-    function toFeature({lat, lng, title, name, story, date, link}) {
+    function toFeature({lat, lng, title, name, story, date, link, year}) {
+      const yearNum = (year !== undefined && year !== null && !Number.isNaN(Number(year))) ? Number(year) : undefined;
       return {
         type: 'Feature',
-        properties: { title, name, story, date, link },
+        properties: { title, name, story, date, link, year: yearNum },
         geometry: { type: 'Point', coordinates: [Number(lng), Number(lat)] }
       };
+    };
     }
 
     function download(filename, content) {
@@ -260,11 +271,14 @@
       if (data && Array.isArray(data.features)) {
         allFeatures = data.features.slice();
         addFeaturesToMap(allFeatures);
-        refreshMapBounds();
+        // start world view by default (no auto-fit)
       }
     })();
 
     // --- Click to set lat/lng ---
+    
+    // --- Zoom-to-all button ---
+    document.getElementById('zoomAll').addEventListener('click', refreshMapBounds);
     map.on('click', (e) => {
       const { lat, lng } = e.latlng;
       document.getElementById('lat').value = lat.toFixed(6);
@@ -274,6 +288,19 @@
     // --- Form handling ---
     const form = document.getElementById('storyForm');
     const formMsg = document.getElementById('formMsg');
+    const yearInput = document.getElementById('year');
+    const dateInput = document.getElementById('date');
+    if (yearInput) {
+      yearInput.setAttribute('max', String(new Date().getFullYear()));
+    }
+    if (dateInput && yearInput) {
+      dateInput.addEventListener('change', (e) => {
+        const v = e.target.value;
+        if (v && !yearInput.value) {
+          yearInput.value = v.slice(0,4);
+        }
+      });
+    }
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -284,6 +311,8 @@
       const lng = parseFloat(document.getElementById('lng').value);
       const date = document.getElementById('date').value || undefined;
       const link = document.getElementById('link').value.trim() || undefined;
+      const yearVal = parseInt(document.getElementById('year').value, 10);
+      const year = Number.isNaN(yearVal) ? undefined : yearVal;
 
       if (!title || !story || Number.isNaN(lat) || Number.isNaN(lng)) {
         formMsg.textContent = 'Please set a location (click the map) and complete required fields.';
@@ -291,7 +320,7 @@
         return;
       }
 
-      const feature = toFeature({lat, lng, title, name, story, date, link});
+      const feature = toFeature({lat, lng, title, name, story, date, link, year});
       allFeatures.push(feature);
       newFeatures.push(feature);
       addFeaturesToMap([feature]);
