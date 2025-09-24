@@ -1,70 +1,23 @@
 ---
-<p class="hint">
-If the form doesn't load, you can open it directly:
-<a href="https://docs.google.com/forms/d/e/FORM_ID/viewform" target="_blank" rel="noopener">Open the form in a new tab</a>.
-</p>
-
-
-<p class="hint">
-By submitting, you consent to publication on our map. We may lightly edit for clarity.
-</p>
-```markdown
----
 layout: default
-title: Submit a story
+title: "Submit a story"
 ---
 
-
-<form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-<label>
-Name (or “Anonymous”)
-<input type="text" name="name" required>
-</label>
-
-
-<label>
-Date of story
-<input type="date" name="date" required>
-</label>
-
-
-<label>
-Location (city, country)
-<input type="text" name="location" required>
-</label>
-
-
-<p class="hint">If you know them, add coordinates (longitude, latitude). This helps us map it faster.</p>
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:.75rem">
-<input type="text" name="lon" placeholder="Longitude (e.g. -3.1883)">
-<input type="text" name="lat" placeholder="Latitude (e.g. 55.9533)">
+<div class="notice">
+  <p><strong>Note:</strong> This form is embedded from Google Forms. Your submission will be stored in our Google Sheet for review before being added to the public map.</p>
 </div>
 
-
-<label>
-Your story
-<textarea name="story" rows="7" required></textarea>
-</label>
-
-
-<label>
-Your email (optional, for follow-up)
-<input type="email" name="email" placeholder="you@example.com">
-</label>
-
-
-<!-- Anti-spam honeypot -->
-<input type="text" name="_gotcha" style="display:none">
-
-
-<!-- Redirect after submit -->
-<input type="hidden" name="_redirect" value="{{ '/thanks.html' | relative_url }}">
-
-
-<button type="submit">Send</button>
-</form>
-
+<iframe src="https://docs.google.com/forms/d/e/FORM_ID/viewform?embedded=true"
+        width="100%" height="1200" frameborder="0" marginheight="0" marginwidth="0">
+  Loading…
+</iframe>
 
 <p class="hint">
-By submitting, you consent to publication on our map. We may lightly edit for clarity.
+  If the form doesn't load, you can open it directly:
+  <a href="https://docs.google.com/forms/d/e/FORM_ID/viewform"
+     target="_blank" rel="noopener">Open the form in a new tab</a>.
+</p>
+
+<p class="hint">
+  By submitting, you consent to publication on our map. We may lightly edit for clarity.
 </p>
