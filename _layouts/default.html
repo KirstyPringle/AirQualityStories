@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ page.title }} | {{ site.title }}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin>
+<style>
+:root { --maxw: 980px; }
+body { max-width: var(--maxw); margin: 0 auto; padding: 1rem; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; line-height: 1.5; }
+header h1 { margin: .2rem 0; font-size: 1.6rem; }
+nav { margin: .25rem 0 1rem; }
+nav a { margin-right: 1rem; text-decoration: none; color: #0b5ed7; }
+nav a:hover { text-decoration: underline; }
+#map { height: 70vh; border-radius: 12px; }
+form { display: grid; gap: .75rem; max-width: 720px; }
+label { font-weight: 600; }
+input, textarea { width: 100%; padding: .6rem; border-radius: 8px; border: 1px solid #c9c9c9; font: inherit; }
+button { padding: .6rem 1rem; border-radius: 10px; border: 1px solid #0b5ed7; background: #0b5ed7; color: #fff; cursor: pointer; }
+button:hover { filter: brightness(.95); }
+.hint { font-size: .9rem; color: #555; }
+footer { color: #666; font-size: .9rem; }
+.notice { background: #f6f9ff; border: 1px solid #d9e6ff; padding: .75rem; border-radius: 8px; }
+</style>
+{% if page.extra_head %}{{ page.extra_head }}{% endif %}
+</head>
+<body>
+<header>
+<h1>{{ site.title }}</h1>
+<nav>
+<a href="{{ '/' | relative_url }}">Home</a>
+<a href="{{ '/map.html' | relative_url }}">Map</a>
+<a href="{{ '/submit.html' | relative_url }}">Submit a story</a>
+</nav>
+<hr>
+</header>
+<main>
+{{ content }}
+</main>
+<footer>
+<hr>
+<p>&copy; {{ site.time | date: '%Y' }} — {{ site.title }}</p>
+</footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin></script>
+</body>
+</html>
