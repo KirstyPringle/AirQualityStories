@@ -1,4 +1,15 @@
 ---
+<p class="hint">
+If the form doesn't load, you can open it directly:
+<a href="https://docs.google.com/forms/d/e/FORM_ID/viewform" target="_blank" rel="noopener">Open the form in a new tab</a>.
+</p>
+
+
+<p class="hint">
+By submitting, you consent to publication on our map. We may lightly edit for clarity.
+</p>
+```markdown
+---
 layout: default
 title: Submit a story
 ---
