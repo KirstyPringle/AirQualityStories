@@ -1,0 +1,15 @@
+{
+"type": "FeatureCollection",
+"features": [
+{
+"type": "Feature",
+"geometry": { "type": "Point", "coordinates": [-3.1883, 55.9533] },
+"properties": {
+"name": "Example Person",
+"date": "2023-08-12",
+"location": "Edinburgh, UK",
+"story": "A smoky morning I’ll never forget."
+}
+}
+]
+}
